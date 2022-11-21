@@ -1,0 +1,90 @@
+[test] test[test] test[test] test[test] test[test] test[test] test[test2] test
+[test] test
+[test] test
+[test] test
+[null] good day to you my friend
+[null] input: Potato
+[Thomas the coolest dude in town] In 1882 booker T Washington set up friends of the indians
+[Thomas the coolest dude in town] 1941 55% of workforce in war related work
+[Thomas the coolest dude in town] and 1.5 million women
+[Thomas the coolest dude in town] californian gold rush california state in 1850
+[Thomas the coolest dude in town] Andrew Jackson was a wanker
+[Thomas the coolest dude in town] so was Andrew Johnson
+[Thomas the coolest dude in town] And most of White americans tbh
+[Thomas the coolest dude in town] Joseph smith murdered ion 1846
+[Thomas the coolest dude in town] I AM OZYMANDIAS KING OF KINGS LOOK ON MY WORKS, YE MIGHTY, AND DESPAIR
+[Thomas the coolest dude in town] LAKOTA SIOUX LIKED BLACK HILLS OF DAKOTA
+[Thomas the coolest dude in town] NEZ PERCE BITTERROOT MOUNTAINS
+[Thomas the coolest dude in town] 161 BLACK PEOPLE LYNCHED IN 1892
+[test] test
+[test] test
+[test] test3
+[test] test 4
+[Suella Braverman] AH I CAN SEE WHAT SAYS
+[Suella Braverman] IT IS DISPLAYING STUFF
+[Margret Thatcher] Hello Suella
+[Margret Thatcher] I do believe we have a lot in common
+[Margret Thatcher] I also hate all those common folk
+[Margret Thatcher] especially the migrant ones
+[Andrew Jackson] Oh yes I agree
+[Andrew Jackson] So much that I will pass the indian removal act in 1830 and I want native americans to 'disapper'
+[test] test
+[test] test 2
+[test] test 3
+[test] test 4
+[test] test 5
+[test] test 6
+[test] test 7
+[test] test 8
+[test] test 
+[test] test 100
+[test] test 102
+[test] test 103
+[test] joad
+[test] hello
+[very proud Thomas] Hello
+[very proud Thomas] YES
+[Holly] how are you?
+[very proud Thomas] I CAN SEE STUFF
+[very proud Thomas] I AM CHATTING
+[very proud Thomas] I AM COOL
+[Holly] yeah theres stuff
+[Holly] it works
+[Holly] its epic
+[very proud Thomas] CURRENTLY LISTENING TO SIBELIUS VIOLIN CONCERTO
+[very proud Thomas] ABSOLUTE BANGER
+[Holly] CURRENTLY LISTENING TO RISE OF EVIL BY SABATON
+[Holly] ABSOLUTE BANGER
+[Holly] AND ALSO METAL
+[Holly] I SEE WE HAVE DIFFERING OPINIONS OF BANGERS
+[Holly] lol
+[very proud Thomas] yes lol
+[Holly] test <br> test
+[Holly] yeah
+[Holly] <div color:#FF0000>Text but in red?</div>
+[Holly] nah
+[Holly] <div color:#FF0000></div>
+[Holly] it isnt working :(
+[Holly] test
+[Holly] <div style:{color:red}>test</div>
+[Holly] test
+[Holly] 
+[Holly] test
+[Holly] test
+[Holly] nah html stuf is bugged
+[Holly] test
+[Holly] test
+[Holly] 
+[Holly] 
+[Holly] test
+[Holly] test
+[very proud Thomas] test
+[very proud Thomas] test
+[very proud Thomas] test
+[very proud Thomas] test
+[very proud Thomas] No it is not working
+[test] ok just went into the file manually
+[Holly] <b>test</b>
+[Holly] test
+[Holly] ok if you are careful not to screw up ur html codes its fine
+[very proud Thomas] mmm

@@ -1,0 +1,168 @@
+body {
+  background-color:#ffffff;
+  color:#000000;
+  font-family:"Courier New"
+}
+
+input[type=text] {
+  outline:none;
+  border:2px solid #330137;
+  font-family:"Courier New";
+}
+
+input[type=text]:focus {
+  outline:none;
+  border:2px solid #b732c3;
+  font-family:"Courier New";
+}
+
+#inputField {
+  padding-top:5px;
+  padding-left:5px;
+  padding-bottom:5px;
+  width:250px;
+  background-color:#CCCCCC;
+}
+
+input[type=button] {
+  margin-top:2px;
+  margin-bottom:2px;
+  background-color:#ffffff;
+  color:#000000;
+  border:2px solid #000000;
+  font-family:"Courier New"
+}
+
+input[type=button]:hover{
+  border:2px solid #b732c3;
+}
+
+input[type=button]:active{
+  background-color:#CCCCCC
+}
+
+#warnBox{
+  background-color:red;
+  color:white;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%, -50%);
+  width:280px;
+  height:18%;
+  padding:10px;
+}
+
+#warnBox #warnTitle {
+  display:inline-block;
+}
+
+#warnBox p {
+  font-size:14px
+}
+
+#loginBox{
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  text-align:centre;
+  width:200px;
+  height:200px;
+  padding:50px;
+  background-color:#CCCCCC;
+}
+
+.visually-hidden {
+  text-decoration-line: line-through;
+  text-decoration-thickness: 10px;
+}
+
+#content {
+  height:calc(80vh - 20px);
+  overflow-y:auto;
+  overflow-wrap:break-word;
+  margin: 10px;
+}
+
+#chatBox {
+  background-color:#FFEFFF;
+  height:calc(100vh - 20px);
+}
+
+.undate {
+  display: none;
+}
+
+.username {
+  display:inline-block
+}
+
+.username:hover + .undate {
+  display: inline-block;
+  color: #550055;
+  font-size:14px;
+  text-align: right;
+}
+
+#stable {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 150px;
+  color:white;
+}
+
+.stableBuild {
+  background-color: #336644;
+}
+
+.unstableBuild {
+  background-color: #663344;
+}
+
+@media (min-width: 400px){
+  #chatBox {
+    width:calc(100vw - 20px)
+  }
+
+  #content {
+    
+  }
+}
+
+@media (min-width: 570px){
+  #chatBox {
+    width:550px
+  }
+
+  #content {
+    
+  }
+}
+
+@media (min-width: 640px){
+  #chatBox {
+    width:550px
+  }
+}
+
+@media (min-width: 768px){
+  #chatBox {
+    width:550px
+  }
+}
+
+@media (min-width: 1024px){
+  #chatBox {
+    width:550px
+  }
+}
+
+@media (min-width: 1200px){
+  #chatBox {
+    width:550px
+  }
+}

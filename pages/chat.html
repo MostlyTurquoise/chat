@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Blub - Chat Room</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <script src="lib.js"></script>
+  <script src="chat.js"></script>
+
+  <meta property="og:title" content="Blub - Chat Room"/>
+  <meta property="og:type" content="website">
+  <meta property="og:determiner" content="a">
+  <meta property="og:locale" content="en_UK">
+  <meta property="og:site_name" content="Blub">
+  <meta property="og:description" content="Barely functional chat room. Do not use if build is unstable."/>
+</head>
+
+<body>
+  <div id=stable></div>
+  <div id=chatBox>
+    <div id=content></div><br>
+    <div id=inputField>
+      <input type=button name=send id=send value=Send onclick=sendButton()></input>
+      <input type=text name="fin" id="fin"></input>
+    </div>
+  </div>
+</body>
+
+</html>

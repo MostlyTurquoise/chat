@@ -1,0 +1,23 @@
+{
+  "trace":{
+    "general":true,
+    "rules":{
+      "consoleFlags":true,
+      "audienceCheck":true,
+      "messageOut":true,
+      "messageIn":false,
+      "login":true,
+      "userAction":true,
+      "audience":true,
+      "server":true,
+      "userData":false
+    }
+  },
+  "build":{
+    "stable":false,
+    "version":0.8,
+    "loaded":true
+  },
+  "strictSessionId":true,
+  "stopMessages":false
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Blub - Sign Up</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <script src="lib.js"></script>
+  <script src="signup.js"></script>
+</head>
+
+<body>
+  <div id=warnBox>
+    <div id=warnTitle>Warning!</div>
+    <p>Do not use a password you use for any other accounts. We cannot be held responsible for data breaches of information you entered.</p>
+  </div>
+  <div id=loginBox>
+    <p>Username:
+    <br>
+    <input type=text name="username" id="username"></input>
+    <br></p>
+    <p>Password:
+    <br>
+    <input type=text name="password" id="password" class="visually-hidden"></input>
+    <br></p>
+    <p>Confirm Password:
+    <br>
+    <input type=text name="passwordConfirm" id="passwordConfirm" class="visually-hidden"></input>
+    <br></p>
+    <input type=button name=login id=login value=Login onclick=submit()></input>
+    
+  </div>
+  <br>
+  <script>
+  </script>
+</body>
+
+</html>
