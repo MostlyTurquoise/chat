@@ -13,8 +13,8 @@ function longpoll(app) {
     create: function(url, mode="POST") {
       if(mode=="POST"){
         this._createAsPost(url)
-      } else if(mode=="GET"){
-        this._createAsGet(url)
+      } else {
+        trace("Unsupported/Unrecognised Poll mode.", "@longpoll")
       }
     },
 
@@ -22,16 +22,23 @@ function longpoll(app) {
       this._app.post(url, (req,res)=>{
         if(sm.verify(req.body.sessionId) || !config.strictSessionId) {
           let id = req.body.sessionId
-          this._awaiting[id]=res
+          this._awaiting[url][id]=res
         }
         
       })
     },
 
-    _createAsGet: function(url) {
-      this._app.get(url, (req,res)=>{
+    // _createAsGet: function(url) {
+    //   this._app.get(url, (req,res)=>{
         
-      })
+    //   })
+    // },
+
+    publish: function(url, data, opts) {
+      keys = Object.keys(this._awaiting[url])
+      for(let i = 0; i<keys.length; i++){
+        this._awaiting[url][keys[i]].send(data)
+      }
     }
   }
 
