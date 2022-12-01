@@ -1,7 +1,7 @@
 import express from "express"
 const app = express();
 
-import longpollInit from "express-longpoll"
+import longpollInit from "./aspects/poll-manager.js"
 const longpoll = longpollInit(app);
 
 import bodyParser from "body-parser"
@@ -11,7 +11,8 @@ import cm from "./aspects/channel-manager.js"
 import { updateClients, handle } from "./aspects/request-manager.js"
 import users from "./aspects/user-manager.js"
 import sm from "./aspects/session-manager.js"
-import {config} from "./aspects/config-manager.js"
+import pray from "./aspects/religion.js"
+import { config } from "./aspects/config-manager.js"
 
 const dir = "/home/runner/chat"
 
@@ -32,42 +33,39 @@ app.use((req, res, next) => {
 
 app.use(express.static('./pages/public'));
 
-longpoll.create("/reciever/:id", (req, res, next) => {
-  req.id = req.params.id
-  next()
-})
+longpoll.create("/reciever")
 
 setInterval(() => {
-  Object.keys(sm.sessions).forEach(key => {
-    longpoll.publish("/reciever/:id", { text: "Audience Check" }, key)
-  })
+  longpoll.publish("/reciever", { text: "Audience Check" })
   trace("Longpoll Audience Check", "@audience")
-}, 60000)
+}, 300000)
+
+pray()
 
 app.get('/', (req, res) => {
-  res.sendFile(dir+'/pages/lander.html')
+  res.sendFile(dir + '/pages/lander.html')
 });
 
 app.get('/login', (req, res) => {
-  res.sendFile(dir+'/pages/login.html')
+  res.sendFile(dir + '/pages/login.html')
 });
 
 app.get("/file/:loc", (req, res) => {
-  res.sendFile(dir+`/pages/public/${req.params.loc}`)
+  res.sendFile(dir + `/pages/public/${req.params.loc}`)
 })
 
 app.get('/signup', (req, res) => {
-  res.sendFile(dir+'/pages/signup.html')
+  res.sendFile(dir + '/pages/signup.html')
 });
 
 app.get('/chat', (req, res) => {
-  res.sendFile(dir+'/pages/chat.html')
+  res.sendFile(dir + '/pages/chat.html')
 });
 
 app.get("/build", (req, res) => {
   let sender = {
-    build : config.build,
-    longpoll : longpoll
+    build: config.build,
+    longpoll: longpoll
   }
   res.send(config.build)
 })
@@ -173,8 +171,16 @@ app.get("/ping", (req, res) => {
   res.status(200).send("pong")
 })
 
+app.post("/perpetuator", (req, res) => {
+  res.status(200).send("Yes, my liege?");
+  trace("Divine Command Recieved", "@religion")
+  setTimeout(() => {
+    pray()
+  }, 60000)
+})
+
 app.listen(3000, () => {
   trace('Server Started', "@server");
 });
 
-export {dir, longpoll}
+export { dir, longpoll }

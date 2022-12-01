@@ -58,9 +58,10 @@ function buildUpdate() {
 async function updateChannel() {
   if (goon) {
     const xhr = new XMLHttpRequest()
-    xhr.open("GET", `https://chat.mostlyturquoise.repl.co/reciever/${lib.cookie.get("sessionId")}`)
+    xhr.open("POST", `https://chat.mostlyturquoise.repl.co/reciever`)
+    xhr.setRequestHeader('Content-type', 'application/json');
     xhr.onload = () => {
-      eval(`updateMessages(${xhr.responseText})`)
+      updateMessages(JSON.parse(xhr.responseText))
       updateChannel()
     }
     xhr.onerror = (err) => {
@@ -69,7 +70,7 @@ async function updateChannel() {
     xhr.ontimeout = () => {
       updateChannel()
     }
-    xhr.send()
+    xhr.send(JSON.stringify({cookie:lib.cookie.get("sessionId")}))
   } else {
     setTimeout(() => {
       updateChannel()
@@ -224,10 +225,8 @@ function getChannelContents(channel) {
     req.onload = () => {
       if (req.status == 200) {
         arrival = JSON.parse(req.responseText)
-        console.log(arrival.metadata.longpoll)
-        delete arrival.metadata.longpoll
         chats[channel] = arrival
-        eval(`console.log(chats.${channel})`)
+        console.log(chats[channel])
         updateDisplay()
       } else if (req.status == 401) {
         location.href = "https://chat.mostlyturquoise.repl.co"

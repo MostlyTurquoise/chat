@@ -2,6 +2,7 @@
   "trace":{
     "general":true,
     "rules":{
+      "timestamp":true,
       "consoleFlags":true,
       "audienceCheck":true,
       "messageOut":true,
@@ -10,7 +11,8 @@
       "userAction":true,
       "audience":true,
       "server":true,
-      "userData":false
+      "userData":false,
+      "religion":false
     }
   },
   "build":{
