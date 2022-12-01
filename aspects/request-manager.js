@@ -1,7 +1,7 @@
 import cm from "./channel-manager.js"
 import sm from "./session-manager.js"
-import {trace} from "./serverside-ui.js"
-import {dir, longpoll} from "/home/runner/chat/index.js"
+import { trace } from "./serverside-ui.js"
+import { dir, longpoll } from "/home/runner/chat/index.js"
 
 function updateClients(channelLoc) {
   cm.get(channelLoc, (channel) => {
@@ -13,9 +13,7 @@ function updateClients(channelLoc) {
         updates: channel
       }
       trace("@messageOut", "Publishing Changes")
-      Object.keys(sm.sessions).forEach(key => {
-        longpoll.publish("/reciever/:id", packet, key)
-      })
+      longpoll.publish("/reciever", packet)
     })
   })
 }

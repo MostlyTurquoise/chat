@@ -7,7 +7,11 @@ const readline = readlineInit.createInterface({
 });
 
 import cm from "./channel-manager.js"
-import {updateClients} from "./request-manager.js"
+import sm from "./session-manager.js"
+import um from "./user-manager.js"
+import pray from "./religion.js"
+import longpoll from "./poll-manager.js"
+import { updateClients, handle } from "./request-manager.js"
 
 let serverSide = {}
 serverSide.echo = (val) => {
@@ -49,12 +53,13 @@ let config = JSON.parse(fs.readFileSync(`./server-config.json`))
 function trace(...args) {
   let typeFlag = null
   let typeFlagFrmt = ""
+  let time = ""
   let command;
   if (typeof args[0] == "string" && args[0].substring(0, 1) == "@") {
     typeFlag = args[0].substring(1, args[0].length)
-    command = `console.log(typeFlagFrmt, `
+    command = `console.log(time+typeFlagFrmt, `
   } else {
-    command = `console.log(typeFlagFrmt, args[0], `
+    command = `console.log(time+typeFlagFrmt, args[0], `
   }
   for (let i = 1; i < args.length; i++) {
     if (typeof args[i] == "string" && args[i].substring(0, 1) == "@") {
@@ -67,6 +72,10 @@ function trace(...args) {
 
   if (config.trace.rules.consoleFlags) {
     typeFlagFrmt = `[${typeFlag}]`
+  }
+
+  if (config.trace.rules.timestamp) {
+    time = `|${new Date().toLocaleTimeString()}| `
   }
 
   if (config.trace.general) {
