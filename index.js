@@ -2,7 +2,10 @@ import express from "express"
 const app = express();
 
 import longpollInit from "./aspects/poll-manager.js"
-const longpoll = longpollInit(app);
+const longpoll = new longpollInit(app);
+
+import CommunicateyInit from "./aspects/Communicatey.js"
+const Communicatey = new CommunicateyInit(app)
 
 import bodyParser from "body-parser"
 
@@ -13,6 +16,7 @@ import users from "./aspects/user-manager.js"
 import sm from "./aspects/session-manager.js"
 import pray from "./aspects/religion.js"
 import { config } from "./aspects/config-manager.js"
+import Packet from "./aspects/packet-manager.js"
 
 const dir = "/home/runner/chat"
 
@@ -35,10 +39,11 @@ app.use(express.static('./pages/public'));
 
 longpoll.create("/reciever")
 
+
 setInterval(() => {
-  longpoll.publish("/reciever", { text: "Audience Check" })
+  longpoll.publish("/reciever", new Packet("audienceCheck","Audience Check", null).setPrivate("target","All"))
   trace("Longpoll Audience Check", "@audience")
-}, 300000)
+}, config.audienceCheckDelay)
 
 pray()
 
@@ -63,11 +68,10 @@ app.get('/chat', (req, res) => {
 });
 
 app.get("/build", (req, res) => {
-  let sender = {
-    build: config.build,
-    longpoll: longpoll
-  }
-  res.send(config.build)
+  let sender = new Packet("channel-update", "updateChannel", {
+    build: config.build
+  })
+  res.json(sender.send())
 })
 
 app.post("/send/:channel", (req, res) => {
@@ -103,7 +107,7 @@ app.post("/send/:channel", (req, res) => {
         res.send()
       })
     } else {
-      packet = {
+      let packet = {
         error: "Strict Session Id is enabled - please Log In."
       }
       res.status(401).send(JSON.stringify(packet))
@@ -120,11 +124,11 @@ app.post("/login", (req, res) => {
   trace("Login request recieved for", body, "@login")
 
   users.find(body, (userRes) => {
-    if (userRes.code == "verif") {
-      let sessionId = sm.create(userRes.user.userId)
+    if (userRes.metadata.public.code == "verif") {
+      let sessionId = sm.create(userRes.content.user.userId)
       res.send(sessionId)
-    } else if (userRes.code == "passf" || userRes.code == "namef") {
-      trace(userRes.code, "@login")
+    } else if (userRes.metadata.public.code == "passf" || userRes.metadata.public.code == "namef") {
+      trace(userRes.metadata.public.code, "@login")
     } else {
       trace("Unexpected Response", "@login")
     }
@@ -135,16 +139,16 @@ app.post("/login", (req, res) => {
 app.post("/signup", (req, res) => {
   trace(req.body)
   users.find({ username: req.body.username, password: req.body.password }, (pak) => {
-    if (pak.code == "namef") {
-      users.create({ username: req.body.username, password: req.body.password }, () => {
+    if (pak.metadata.public.code == "namef") {
+      users.create({ username: req.body.username, password: req.body.password }, (userUUID) => {
         users.get(userUUID).then((value) => {
           trace(value)
           res.send(value)
         })
       })
     } else {
-      trace(pak.code)
-      packet = {
+      trace(pak.metadata.public.code)
+      let packet = {
         error: "User Exists Already"
       }
       res.status(405).send(JSON.stringify(packet))

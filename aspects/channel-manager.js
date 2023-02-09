@@ -76,10 +76,7 @@ cm.sendTo = async function (channelStr, packet, cb) {
     let channelPath = `./channels/${channelStr}.json`
     let returnChannel = channel
     returnChannel.messages = returnChannel.messages.concat([packet])
-    let jsonChannel = JSON.stringify(returnChannel)
-    jsonChannel = jsonReplaceon(jsonChannel, ",", ",\n")
-    jsonChannel = jsonReplaceon(jsonChannel, "{", "\n{\n")
-    jsonChannel = jsonReplaceon(jsonChannel, "}", "\n}")
+    let jsonChannel = JSON.stringify(returnChannel,null,2)
     fs.writeFile(channelPath, jsonChannel, () => {
       cb()
     })

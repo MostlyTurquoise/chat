@@ -29,9 +29,10 @@ let goon = false
 const buildCheck = new XMLHttpRequest()
 buildCheck.open("GET", "https://chat.mostlyturquoise.repl.co/build")
 buildCheck.onload = () => {
-  build = JSON.parse(buildCheck.responseText)
+  build = JSON.parse(buildCheck.responseText).content.build
   if (!build.stable) {
-    goon = confirm("This build is not stable, and you could damage the server. \nAre you sure you wish to continue?")
+    console.log(build.description)
+    goon = confirm(build.descripion)
   } else {
     goon = true
   }
@@ -70,7 +71,7 @@ async function updateChannel() {
     xhr.ontimeout = () => {
       updateChannel()
     }
-    xhr.send(JSON.stringify({cookie:lib.cookie.get("sessionId")}))
+    xhr.send(JSON.stringify({ sessionId: lib.cookie.get("sessionId") }))
   } else {
     setTimeout(() => {
       updateChannel()
@@ -88,27 +89,11 @@ function scrollToBottom(id) {
 }
 
 function updateMessages(objIn) {
-  if (typeof objIn == "object" && objIn.text) {
-    if (objIn.text == "Audience Check") {
-      console.log("Audience Check Arrived.")
-      return;
-    } else {
-      console.warn("Unexpected Long Poll Update", objIn == lib.cookie.get("sessionId"))
-    }
-  } else if (typeof objIn == "array") {
-    for (var obj in objIn) {
-      for (var update in obj.updates) {
-        let chatLength;
-        chatLength = chats[obj.chat].length
-        while (update.loc > chatLength) {
-          chatLength = chats[obj.chat].push("")
-          chatLength = chats[obj.chat].length
-        }
-        chats[obj.chat][update.loc] = update.val
-      }
-    }
-    updateDisplay()
-    notifQuery()
+  //OTHER PACKET METHOD HANDLING
+  if (typeof objIn == "object" && objIn.metadata.public.method == "Audience Check") {
+
+    console.log("Audience Check Arrived.")
+
   } else if (typeof objIn == "object" && objIn.type == "update") {
     var obj = objIn
     for (var update in obj.updates) {
@@ -122,12 +107,12 @@ function updateMessages(objIn) {
     }
     updateDisplay()
     notifQuery()
-  } else if (typeof objIn == "object" && objIn.type == 50) {
-    chats[objIn.chat] = objIn.updates
+  } else if (typeof objIn == "object" && objIn.metadata.public.method == "Full Channel") {
+    chats[objIn.metadata.public.channel] = objIn.content
     updateDisplay()
     notifQuery()
   } else {
-    console.log("unexpected response")
+    console.log("unexpected response", objIn)
   }
 }
 
@@ -276,4 +261,16 @@ document.addEventListener("keypress", (e) => {
 
 function s(m) {
   return (m * 1000)
+}
+
+let pushes = 0
+if (lib.cookie.get("pushes")) {
+  pushes = lib.cookie.get("pushes")
+  document.getElementById("countbutton").value = pushes
+}
+
+function count() {
+  pushes++
+  document.getElementById("countbutton").value = pushes
+  lib.cookie.set("pushes", pushes)
 }

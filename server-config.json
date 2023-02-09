@@ -2,24 +2,29 @@
   "trace":{
     "general":true,
     "rules":{
-      "timestamp":true,
+      "timestamp":false,
       "consoleFlags":true,
       "audienceCheck":true,
       "messageOut":true,
-      "messageIn":false,
+      "messageIn":true,
       "login":true,
       "userAction":true,
       "audience":true,
       "server":true,
       "userData":false,
-      "religion":false
+      "religion":false,
+      "longpoll":true
     }
   },
   "build":{
     "stable":false,
-    "version":0.8,
-    "loaded":true
+    "version":0.9,
+    "loaded":true,
+    "restrictMessages":false,
+    "description":"This build is unstable and you could damage the server. Are you sure you wish to continue?"
   },
   "strictSessionId":true,
-  "stopMessages":false
+  "stopMessages":false,
+  "restrictMessages":false,
+  "audienceCheckDelay":30000
 }

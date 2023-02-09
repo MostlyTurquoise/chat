@@ -6,8 +6,6 @@
   <title>Blub - Chat Room</title>
   <link href="style.css" rel="stylesheet" type="text/css" />
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-  <script src="lib.js"></script>
-  <script src="chat.js"></script>
 
   <meta property="og:title" content="Blub - Chat Room"/>
   <meta property="og:type" content="website">
@@ -26,6 +24,17 @@
       <input type=text name="fin" id="fin"></input>
     </div>
   </div>
+  <div id="basicButton"></div>
+
+  <input type=button value="0" onclick=count() id=countbutton></input>
+
+    <script src="lib.js"></script>
+  <script src="chat.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin>    </script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+  <script src="button.js"></script>
+  
 </body>
 
 </html>
