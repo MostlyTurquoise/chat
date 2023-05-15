@@ -9,22 +9,24 @@
       "messageIn":true,
       "login":true,
       "userAction":true,
-      "audience":true,
+      "audience":false,
       "server":true,
       "userData":false,
       "religion":false,
-      "longpoll":true
+      "longpoll":true,
+      "line":true
     }
   },
   "build":{
     "stable":false,
-    "version":0.9,
+    "version":0.10,
     "loaded":true,
     "restrictMessages":false,
-    "description":"This build is unstable and you could damage the server. Are you sure you wish to continue?"
+    "description":"GO AWAY. NOW.",
+    "password":"overrideThis"
   },
   "strictSessionId":true,
   "stopMessages":false,
   "restrictMessages":false,
-  "audienceCheckDelay":30000
+  "audienceCheckDelay":30000000
 }

@@ -1,7 +1,7 @@
 import { trace } from "./serverside-ui.js"
 import sm from "./session-manager.js"
 import { config } from "./config-manager.js"
-import Event from "events"
+import EventEmitter from "events"
 import Packet from "./packet-manager.js"
 
 class longpoll {
@@ -13,7 +13,7 @@ class longpoll {
     this._publishCooldown = 50
     this.dataQueue = []
 
-    this._trigger = new Event("message")
+    this._trigger = new EventEmitter("message")
 
     this._trigger.addListener("message", (data) => {
       trace("Message Published", data, "@messageOut")
@@ -38,18 +38,18 @@ class longpoll {
       const responseHandler = (packet) => {        
         let applies;
         
-        if (typeof packet.metadata._private.target == "object") {
-          for(let i = 0; i<packet.metadata._private.target.length; i++){
-            if(packet.metadata._private.target[i]==req.body.sessionId){
+        if (typeof packet.private("target") == "object") {
+          for(let i = 0; i<packet.private("target").length; i++){
+            if(packet.private("target")[i]==req.body.sessionId){
               applies = true
             }
           }
-        } else if (typeof packet.metadata._private.target == "number" && packet.metadata._private.target == req.body.sessionId) {
+        } else if (typeof packet.private("target") == "number" && packet.private("target") == req.body.sessionId) {
           applies = true
-        } else if (packet.metadata._private.target == "All") {
+        } else if (packet.private("target") == "All") {
           applies = true
         } else {
-          trace("Unexpected Target selection",packet.metadata._private, "@Communicatey")
+          trace("Unexpected Target selection",packet.private("target"), "@Communicatey")
           applies = null
         }
 
@@ -70,12 +70,12 @@ class longpoll {
   }
 
   publish(url, data) {
-
-    if (this._publishLock == true) {
+    trace("Publishing",data,"@longpoll")
+    if (this._publishLock) {
       this.dataQueue.push(data)
       trace("Data Queued to", url, "@messageOut")
 
-    } else if (this._publishLock == false) {
+    } else if (!this._publishLock) {
       trace("Publishing to", url, "@messageOut")
 
       let packetOut = data
@@ -87,7 +87,7 @@ class longpoll {
         this._publishLock = false
 
         if (this.dataQueue.length > 0) {
-          this.publish("/reciever", new Packet("packetOut", opts.method + "--Bundle", this.dataQueue).send())
+          this.publish("/reciever", new Packet("packetOut", data.method + "--Bundle", this.dataQueue).send())
           this.dataQueue = []
         }
       }, this._publishCooldown)

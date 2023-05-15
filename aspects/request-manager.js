@@ -10,8 +10,7 @@ function updateClients(channelLoc) {
       let channel = val
       let clientUpdate = new Packet("clientUpdate", "Full Channel", channel)
       clientUpdate.setPrivate("target", "All")
-      trace(clientUpdate.metadata, "@debug")
-      clientUpdate.metadata._public.channel = channelLoc
+      clientUpdate.setPublic("channel", channelLoc)
 
       trace("@messageOut", "Publishing Changes")
       longpoll.publish("/reciever", clientUpdate)

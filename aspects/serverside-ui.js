@@ -8,10 +8,11 @@ const readline = readlineInit.createInterface({
 
 import cm from "./channel-manager.js"
 import sm from "./session-manager.js"
-import um from "./user-manager.js"
+import User from "./user-manager.js"
 import pray from "./religion.js"
 import longpoll from "./poll-manager.js"
 import { updateClients, handle } from "./request-manager.js"
+import {config, updateConfig} from "./config-manager.js"
 
 let serverSide = {}
 serverSide.echo = (val) => {
@@ -34,6 +35,28 @@ serverSide.send = (message) => {
   })
 }
 
+serverSide.user = async function(uuid) {
+  let tempUser = await new User().load(uuid)
+  trace(tempUser,"@server")
+}
+
+serverSide.editUser = async function(uuid) {
+  trace(`>------Entering Edit Mode-------<`,"@userEditor")
+  this.tempUser = await new User().load(uuid)
+  trace(`serverSide.tempUser =`, this.tempUser, "@userEditor")
+  
+}
+
+serverSide.editUserSafemode = async function(uuid) {
+  trace(`>------Entering Safe Edit Mode-------<`,"@userEditor")
+  this.tempUser = await new User.Safe({
+    read:["sensitive","constant","data"],
+    write:["sensitive","data","constant"]
+  }).load(uuid)
+  trace(`serverSide.tempUser =`, this.tempUser.getAll(), "@userEditor")
+  
+}
+
 serverSide.run = (command) => {
   try {
     eval(command)
@@ -44,22 +67,35 @@ serverSide.run = (command) => {
 }
 
 serverSide.reload = (blank) => {
-  config = JSON.parse(fs.readFileSync(`./server-config.json`))
+  updateConfig()
   trace("Config Updated", "@server")
 }
 
-let config = JSON.parse(fs.readFileSync(`./server-config.json`))
+function getErrorObject(){
+      try { throw Error('') } catch(err) { return err; }
+  }
 
 function trace(...args) {
+  
+  let err = getErrorObject();
+  let caller = err.stack.match(/at file:[a-zA-Z0-9\/:\-\._]*/)
+  let clean = "unknown"
+
+  if(caller) {
+    let end = caller.toString().split("/").at(-1)
+    clean = err.stack
+  }
+  
   let typeFlag = null
   let typeFlagFrmt = ""
   let time = ""
+  let line = ""
   let command;
   if (typeof args[0] == "string" && args[0].substring(0, 1) == "@") {
     typeFlag = args[0].substring(1, args[0].length)
-    command = `console.log(time+typeFlagFrmt, `
+    command = `console.log(line+time+typeFlagFrmt, `
   } else {
-    command = `console.log(time+typeFlagFrmt, args[0], `
+    command = `console.log(line+typeFlagFrmt, args[0], `
   }
   for (let i = 1; i < args.length; i++) {
     if (typeof args[i] == "string" && args[i].substring(0, 1) == "@") {
@@ -76,6 +112,10 @@ function trace(...args) {
 
   if (config.trace.rules.timestamp) {
     time = `|${new Date().toLocaleTimeString()}| `
+  }
+
+  if(config.trace.rules.line){
+    line = `@${clean} `
   }
 
   if (config.trace.general) {

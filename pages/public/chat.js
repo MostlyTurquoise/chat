@@ -32,7 +32,18 @@ buildCheck.onload = () => {
   build = JSON.parse(buildCheck.responseText).content.build
   if (!build.stable) {
     console.log(build.description)
-    goon = confirm(build.descripion)
+    if(build.password){
+      goon = prompt(`${build.description}\n
+      Version: ${build.version}
+      Restrict Messages: ${build.restrictMessages}`)==build.password
+    } else {
+      goon = confirm(
+      `${build.description}\n
+      Version: ${build.version}
+      Restrict Messages: ${build.restrictMessages}`
+    )
+    }
+    
   } else {
     goon = true
   }
@@ -41,7 +52,7 @@ buildCheck.onload = () => {
     updateChannel()
     buildUpdate()
   } else {
-    location.href = "https://google.com"
+    location.href = "about:blank"
   }
 }
 buildCheck.send()
@@ -90,6 +101,7 @@ function scrollToBottom(id) {
 
 function updateMessages(objIn) {
   //OTHER PACKET METHOD HANDLING
+  console.log(objIn)
   if (typeof objIn == "object" && objIn.metadata.public.method == "Audience Check") {
 
     console.log("Audience Check Arrived.")
@@ -109,6 +121,7 @@ function updateMessages(objIn) {
     notifQuery()
   } else if (typeof objIn == "object" && objIn.metadata.public.method == "Full Channel") {
     chats[objIn.metadata.public.channel] = objIn.content
+    console.log(chats)
     updateDisplay()
     notifQuery()
   } else {
@@ -269,8 +282,16 @@ if (lib.cookie.get("pushes")) {
   document.getElementById("countbutton").value = pushes
 }
 
-function count() {
+
+document.getElementById("countbutton").addEventListener("click", (e)=>{
   pushes++
   document.getElementById("countbutton").value = pushes
   lib.cookie.set("pushes", pushes)
-}
+})
+
+document.getElementById("countbutton").addEventListener('contextmenu', function (e) { 
+  pushes--
+  document.getElementById("countbutton").value = pushes
+  lib.cookie.set("pushes", pushes)
+  e.preventDefault(); 
+});
