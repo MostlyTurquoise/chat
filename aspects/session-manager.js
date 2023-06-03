@@ -1,11 +1,9 @@
 import crypto from "node:crypto"
 import { trace } from "./serverside-ui.js"
 
-
-
 let sm = {}
 
-sm.sessions = {}
+sm.sessions = {"tester":"tester"}
 
 sm.verify = function(session) {
   if (sm.sessions[session]) {
@@ -15,8 +13,11 @@ sm.verify = function(session) {
   }
 }
 
-sm.clear = function() {
+sm.clear = function(tester=false) {
   sm.sessions = {}
+  if(tester){
+    sm.sessions = {"tester":"tester"}
+  }
 }
 
 sm.create = function(uuuid) {
@@ -26,6 +27,7 @@ sm.create = function(uuuid) {
       existingSessions.push(Object.keys(sm.sessions)[i])
     }
   }
+  
   if (existingSessions.length == 0) {
     let sessionId = crypto.randomUUID()
     sm.sessions[sessionId] = uuuid

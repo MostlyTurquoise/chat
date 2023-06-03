@@ -6,11 +6,11 @@ function submit() {
 
   const xhr = new XMLHttpRequest()
   xhr.open("POST", "https://chat.mostlyturquoise.repl.co/login")
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('Content-type', 'application/json');
   xhr.onload = () => {
     lib.cookie.set("sessionId",xhr.responseText)
     console.log(xhr.responseText)
     location.href = "https://chat.mostlyturquoise.repl.co/chat"
   }
-  xhr.send(`{username:"${username}", password:"${password}"}`)
+  xhr.send(JSON.stringify({username:username, password:password}))
 }

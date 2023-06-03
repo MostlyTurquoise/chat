@@ -1,7 +1,6 @@
 let username, password;
 
 function submit() {
-  sending
   username = document.getElementById("username").value
   password = document.getElementById("password").value
 

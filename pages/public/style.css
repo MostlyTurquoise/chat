@@ -16,9 +16,25 @@ input[type=text]:focus {
   font-family:"Courier New";
 }
 
+input[type=password] {
+  outline:none;
+  border:2px solid #330137;
+  font-family:"Courier New";
+}
+
+input[type=password]:focus {
+  outline:none;
+  border:2px solid #b732c3;
+  font-family:"Courier New";
+}
+
+h1 {
+  font-size:1.5rem;
+}
+
 #inputField {
   padding-top:5px;
-  margin-left:5;
+  margin-left:5px;
   padding-left:5px;
   padding-bottom:5px;
   width:250px;
@@ -31,6 +47,7 @@ input[type=button] {
   background-color:#ffffff;
   color:#000000;
   border:2px solid #000000;
+  font-size:16px;
   font-family:"Courier New"
 }
 
@@ -77,8 +94,7 @@ input[type=button]:active{
 }
 
 .visually-hidden {
-  text-decoration-line: line-through;
-  text-decoration-thickness: 10px;
+  
 }
 
 #content {
@@ -114,6 +130,13 @@ input[type=button]:active{
   right: 0;
   width: 150px;
   color:white;
+}
+
+#countbutton {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin:5px;
 }
 
 .stableBuild {

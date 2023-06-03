@@ -2,24 +2,33 @@
   "trace":{
     "general":true,
     "rules":{
-      "timestamp":true,
+      "timestamp":false,
       "consoleFlags":true,
       "audienceCheck":true,
       "messageOut":true,
-      "messageIn":false,
+      "messageIn":true,
       "login":true,
       "userAction":true,
-      "audience":true,
+      "audience":false,
       "server":true,
       "userData":false,
-      "religion":false
+      "religion":false,
+      "longpoll":true,
+      "line":true,
+      "channelDebug":true,
+      "fullLine":false
     }
   },
   "build":{
     "stable":false,
-    "version":0.8,
-    "loaded":true
+    "version":"0.1.11",
+    "versionAdd":"beta 0.2.x",
+    "loaded":true,
+    "restrictMessages":false,
+    "description":"This build is in development and it's use may damage the server. Are you sure you wish to continue?"
   },
-  "strictSessionId":true,
-  "stopMessages":false
+  "strictSessionId":false,
+  "stopMessages":false,
+  "restrictMessages":false,
+  "audienceCheckDelay":30000000
 }

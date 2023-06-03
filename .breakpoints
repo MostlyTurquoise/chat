@@ -1,3 +1,18 @@
 {
-  "files": {}
+  "files": {
+    "aspects/user-manager.js": [
+      {
+        "id": "4821d860-765d-4e30-b81b-69c625aa16d3",
+        "line": 309,
+        "version": 6080,
+        "index": 8044
+      },
+      {
+        "id": "9429026e-0f15-4b13-9d30-a3df3878ce75",
+        "line": 316,
+        "version": 6080,
+        "index": 8185
+      }
+    ]
+  }
 }
