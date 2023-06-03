@@ -56,19 +56,38 @@ setInterval(() => {
 
 //Testing
 
-const cat = new Communicatey(app, 
-  "/comm",
-  {
-    "/cp":(req,res)=>{
-      
-    }
-  },
-  {
-    "/lp":(req,res)=>{
-      
-    }
+let cat = new Communicatey(app,"/update",(req,res)=>{
+  req.computed = {
+    id:"test"
   }
-)
+},{debug:true})
+
+let iterator = 0
+setInterval(()=>{
+  User.Safe.get("f9e50e7e-bee8-42c9-92fc-e2e538c29e50")
+    .then((user)=>{
+      iterator++
+    let clientUpdate = new Packet(
+      "clientUpdate",
+      "message-new",
+      {
+        user:user, 
+        message:{
+          user:{
+            uuid:"f9e50e7e-bee8-42c9-92fc-e2e538c29e50"
+          },
+          content:{
+            message:"This message is fake",
+            timestamp: `${new Date()}`
+          },
+          id:1000+iterator
+        }
+      }
+    )
+    clientUpdate.setPrivate({target:Communicatey.ALL})
+    cat.publish(clientUpdate)
+  })
+},10000)
 
 //Endpoints
 
@@ -202,9 +221,36 @@ app.get("/build", (req, res) => {
   res.json(sender.send())
 })
 
+app.get("/reindex/:channel",(req,res)=>{
+  trace("@api-Debug","Re-indexing")
+  let channel = new Channel(req.params.channel)
+  channel.reIndex().then(()=>{
+    res.send("Re-indexed")
+  })
+})
+
+app.get("/create/:type/:title",(req,res)=>{
+  trace("@api-Create","Create Request")
+  if(!config.strictSessionId || sm.verify(req.headers.sessionid)){
+    if(req.params.type=="channel"){
+      Channel.create(req.params.title).then((name)=>{
+        res.send(name)
+      }).catch((err)=>{
+        res.status(400).send(err)
+      })
+      
+    } else {
+      res.sendStatus(404)
+    }
+    
+  } else {
+    res.sendStatus(401)
+  }
+})
+
 app.get('/channel/:channel', (req, res) => {
   trace("@api-Channel","Channel request from",req.headers.sessionid)
-  if (sm.verify(req.headers.sessionid)) {
+  if (sm.verify(req.headers.sessionid) || !config.strictSessionId) {
     
     let channel = new Channel(req.params.channel)
 
@@ -218,22 +264,27 @@ app.get('/channel/:channel', (req, res) => {
 
     let start, end
 
+    trace(req.query)
+
     if("start" in req.query && "end" in req.query){
+      trace("@api-Channel-debug","Specific Range Requested")
       start = parseInt(req.query.start)
       end = parseInt(req.query.end)
-
       if(start>=0 && end>=0 && start<end){
         channel.messages({
           start:start, 
           end:end
         }).then((messages)=>{
+          trace(messages[0].id)
           continuing(messages)
         })
       } else {
+        trace("@api-Channel-WARNING","Invalid Range Request")
         res.status(400).send("Invalid range specified")
       }
       
     } else if(!("start" in req.query || "end" in req.query)){
+      trace("@api-Channel-debug","No Range Requested")
       channel.messages({last:50}).then((messages)=>{
         continuing(messages)
       })
@@ -249,22 +300,29 @@ app.get('/channel/:channel', (req, res) => {
       })
       
       let uniqueUsers = []
+
+      for(let msg in messages){
+        if(!uniqueUsers.includes(messages[msg].user.uuid)) {
+          uniqueUsers.push(messages[msg].user.uuid)
+        }
+      }
+      
       let updateEmitter = new EventEmitter("Update")
       
-      updateEmitter.on("update",(msg)=>{
-        if(msg==messages.length-1){
-          packetToSend.content.users = uniqueUsers
+      updateEmitter.on("update",(usr)=>{
+        if(packetToSend.content.users.length==uniqueUsers.length){
+          // trace(packetToSend.content.users, packetToSend.content.messages)
           res.json(packetToSend.send())
         }
       })
+
+      trace("@uniqueUsers",uniqueUsers)
       
-      for(let msg in messages){
-        if(!uniqueUsers.includes(messages[msg].user.uuid)){
-          User.Safe.get(messages[msg].user.uuid).then((user)=>{
-            uniqueUsers.push(user)
-            updateEmitter.emit("update",msg)
+      for(let usr in uniqueUsers){
+        User.Safe.get(uniqueUsers[usr]).then((user)=>{
+            packetToSend.content.users.push(user)
+            updateEmitter.emit("update",usr)
           })
-        }
       }
       
     }
@@ -299,18 +357,6 @@ app.get('/channel/:channel', (req, res) => {
     res.sendStatus(401)
   }
 })
-
-function cleanString(input) {
-    var output = "";
-    for (var i=0; i<input.length; i++) {
-        if (input.charCodeAt(i) <= 127) {
-            output += input.charAt(i);
-        } else {
-          output+="?"
-        }
-    }
-    return output;
-}
 
 app.get("/user/:userId",(req,res)=>{
   trace("@api-User","User request from",req.headers.sessionid)

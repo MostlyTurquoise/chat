@@ -10,7 +10,7 @@ import _ from "lodash"
 
 class Channel {
   constructor(channelStr) {
-    this.path = `./channels/${channelStr}`
+    this.path = `/home/runner/chat/channels/${channelStr}`
   }
 
   async backup() {
@@ -18,8 +18,9 @@ class Channel {
       let contents = await fsp.open(this.path + "/contents.json")
       let index = await fsp.open(this.path + "/contents.index")
       let backupDate = new Date()
-      let backupContents = await fsp.open(this.path+`/backups/${backupDate.toISOString().replaceAll(" ","_")}.json`,"wx")
-      let backupIndex = await fsp.open(this.path+`/backups/${backupDate.toISOString().replaceAll(" ","_")}.index`,"wx")
+      let backupFileName = backupDate.toISOString().replaceAll(" ","_")
+      let backupContents = await fsp.open(this.path+`/backups/${backupFileName}.json`,"wx")
+      let backupIndex = await fsp.open(this.path+`/backups/${backupFileName}.index`,"wx")
       
       let contentsFile = await contents.readFile("utf8")
       let indexFile = await index.readFile("utf8")
@@ -57,9 +58,9 @@ class Channel {
 
   }
 
-  async index(opts = { type: "object" }) {
+  async index(opts = { type: "object", last:50 }) {
     return new Promise(async (resolve, reject) => {
-      _.defaults(opts,{type:"object"})
+      _.defaults(opts,{type:"object", last:50})
       let fd = await fsp.open(this.path + "/contents.index")
       let charStream = fd.createReadStream({ start: 0, end: 5 })
       let metadata = ""
@@ -94,13 +95,16 @@ class Channel {
             ...calcEnd
           }
         } else {
+          trace("@channelDebug",chars, opts.last, charsPerBlock, metadata, metadataVal, charsPerVal)
           let startPoint = chars - (opts.last * charsPerBlock)
-          trace(startPoint)
+          trace("@channelDebug",startPoint)
           settings = {
             start: startPoint
           }
-          trace(settings)
+          
         }
+
+        trace("@channelDebug",settings)
 
         // trace(metadataVal, charsPerVal, charsPerBlock, calcEnd, calcStart,settings, "@metadata")
 
@@ -198,7 +202,7 @@ class Channel {
       // trace(indexKeys[0],index[indexKeys[0]])
 
       let startPosition = index[indexKeys[0]]
-      // trace(startPosition)
+      trace(startPosition)
       let endObj = {}
 
       if ("end" in opts) {
@@ -315,6 +319,22 @@ class Channel {
       indexR.close()
       indexW.close()
       channelR.close()
+    })
+  }
+
+  static async create(name){
+    return new Promise(async (resolve, reject)=>{
+      let path = `/home/runner/chat/channels/${name}`
+      fsp.access(path).then(()=>{
+        reject("Already Exists")
+      }).catch((err)=>{
+        if(err.code=="ENOENT"){
+          resolve("Channel Can Be Made")
+        } else {
+          console.error(err)
+          resolve(err)
+        }
+      })
     })
   }
 
@@ -497,10 +517,13 @@ cm.sendTo = async function(channelStr, packet, cb) {
   cm.get(channelStr, (channel) => {
     let channelPath = `./channels/${channelStr}/contents.json`
     let returnChannel = channel
-    returnChannel.messages = returnChannel.messages.concat([packet])
+    returnChannel.messages = returnChannel.messages.concat([{...packet, id:parseInt(returnChannel.messages.at(-1).id)+1}])
     let jsonChannel = JSON.stringify(returnChannel, null, 2)
     fs.writeFile(channelPath, jsonChannel, () => {
-      cb()
+      let ch = new Channel(channelStr)
+      ch.reIndex().then(()=>{
+        cb()
+      })
     })
   })
 }

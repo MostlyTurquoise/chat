@@ -72,12 +72,12 @@ class Packet {
   }
 
   #setPrivateObj(obj){
-    this.#metadataprivate = {...this.metadata._private, ...obj}
+    this.#metadataprivate = {...this.#metadataprivate, ...obj}
     return this
   }
 
   #setPublicObj(obj){
-    this.#metadatapublic = {...this.metadata._private, ...obj}
+    this.#metadatapublic = {...this.#metadataprivate, ...obj}
     return this
   }
 

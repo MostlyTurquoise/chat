@@ -14,18 +14,20 @@
       "userData":false,
       "religion":false,
       "longpoll":true,
-      "line":true
+      "line":true,
+      "channelDebug":true,
+      "fullLine":false
     }
   },
   "build":{
     "stable":false,
-    "version":0.10,
+    "version":"0.1.11",
+    "versionAdd":"beta 0.2.x",
     "loaded":true,
     "restrictMessages":false,
-    "description":"GO AWAY. NOW.",
-    "password":"overrideThis"
+    "description":"This build is in development and it's use may damage the server. Are you sure you wish to continue?"
   },
-  "strictSessionId":true,
+  "strictSessionId":false,
   "stopMessages":false,
   "restrictMessages":false,
   "audienceCheckDelay":30000000

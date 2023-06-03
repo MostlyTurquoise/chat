@@ -173,11 +173,23 @@ class User {
     static async get(id) {
       trace("Getting", id, "@userAction")
       let user = await userDB.get(id)
-      try {
-        delete user.password
-      } catch(error) {
-        delete user.sensitive.password
+      if(user){
+        try{
+          delete user.password
+        } catch(err){
+          delete user.sensitive.password
+        }
+        user.uuid = id
+      } else {
+        user = {
+          uuid:"undefined",
+          username:"Unknown"
+        }
       }
+      
+      
+      
+      return user
     }
   }
 

@@ -78,12 +78,12 @@ function getErrorObject(){
 function trace(...args) {
   
   let err = getErrorObject();
-  let caller = err.stack.match(/at file:[a-zA-Z0-9\/:\-\._]*/)
+  let caller = err.stack.match(/\n    at file:[a-zA-Z0-9\/:\-\._]*/)
   let clean = "unknown"
 
   if(caller) {
     let end = caller.toString().split("/").at(-1)
-    clean = err.stack
+    clean = config.trace.rules.fullLine ? err.stack : end
   }
   
   let typeFlag = null
