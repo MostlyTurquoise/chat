@@ -27,7 +27,7 @@ import EventEmitter from "events"
 
 const dir = process.cwd()
 
-User.list()
+// User.list()
 
 serverCommands()
 
@@ -65,31 +65,31 @@ let cat = new Communicatey(app,"/update",(req,res)=>{
 },{debug:true})
 
 let iterator = 0
-setInterval(()=>{
-  User.Safe.get("f9e50e7e-bee8-42c9-92fc-e2e538c29e50")
-    .then((user)=>{
-      iterator++
-    let clientUpdate = new Packet(
-      "clientUpdate",
-      "message-new",
-      {
-        user:user, 
-        message:{
-          user:{
-            uuid:"f9e50e7e-bee8-42c9-92fc-e2e538c29e50"
-          },
-          content:{
-            message:"This message is fake",
-            timestamp: `${new Date()}`
-          },
-          id:1000+iterator
-        }
-      }
-    )
-    clientUpdate.setPrivate({target:Communicatey.ALL})
-    cat.publish(clientUpdate)
-  })
-},10000)
+// setInterval(()=>{
+//   User.Safe.get("f9e50e7e-bee8-42c9-92fc-e2e538c29e50")
+//     .then((user)=>{
+//       iterator++
+//     let clientUpdate = new Packet(
+//       "clientUpdate",
+//       "message-new",
+//       {
+//         user:user, 
+//         message:{
+//           user:{
+//             uuid:"f9e50e7e-bee8-42c9-92fc-e2e538c29e50"
+//           },
+//           content:{
+//             message:"This message is fake",
+//             timestamp: `${new Date()}`
+//           },
+//           id:1000+iterator
+//         }
+//       }
+//     )
+//     clientUpdate.setPrivate({target:Communicatey.ALL})
+//     cat.publish(clientUpdate)
+//   })
+// },10000)
 
 //Endpoints
 

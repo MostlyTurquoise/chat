@@ -5,6 +5,8 @@ import Database from "@replit/database"
 import Packet from "./packet-manager.js"
 let userDB = new Database()
 
+// await client.query("CREATE TABLE usernames (UserID varchar(255), ")
+
 class User {
   #uuid;
 

@@ -6,6 +6,11 @@ const readline = readlineInit.createInterface({
   output: process.stdout
 });
 
+import pkg from "pg"
+const { Client } = pkg
+
+const client = new Client(process.env.DATABASE_URL)
+
 import cm from "./channel-manager.js"
 import sm from "./session-manager.js"
 import User from "./user-manager.js"
@@ -135,6 +140,39 @@ async function serverCommands() {
     }
     serverCommands()
   });
+}
+
+serverSide.sqlOpen = async (q) => {
+  try{
+    await client.connect()
+    trace("Client Connected","@sqldb")
+  } catch(err) {
+    trace("Connection Failed:",err,"@sqldb")
+  }
+  
+}
+
+serverSide.sqlQuery = async (q) => {
+  try{
+    await client.query(q)
+    trace("Query Made","@sqldb")
+  } catch(err) {
+    trace("Query Failed:",err.message,err.detail,"@sqldb")
+  }
+}
+
+serverSide.sqlClose = async (q) => {
+  try{
+    await client.end()
+    trace("Client Connection Ended","@sqldb")
+  } catch(err) {
+    trace("Connection End Failed:",err,"@sqldb")
+  }
+  
+}
+
+serverSide.end = (e) => {
+  process.exit(e)
 }
 
 export { trace, serverCommands, serverSide }
