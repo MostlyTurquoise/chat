@@ -154,8 +154,8 @@ serverSide.sqlOpen = async (q) => {
 
 serverSide.sqlQuery = async (q) => {
   try{
-    await client.query(q)
-    trace("Query Made","@sqldb")
+    let response = await client.query(q)
+    trace("Query Made, Response:", response.rows, "@sqldb")
   } catch(err) {
     trace("Query Failed:",err.message,err.detail,"@sqldb")
   }
@@ -172,7 +172,7 @@ serverSide.sqlClose = async (q) => {
 }
 
 serverSide.end = (e) => {
-  process.exit(e)
+  process.exit(parseInt(e))
 }
 
 export { trace, serverCommands, serverSide }
