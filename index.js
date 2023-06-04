@@ -9,6 +9,8 @@ import Communicatey from "./aspects/Communicatey.js"
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 
+import process from "node:process"
+
 import { trace, serverCommands } from "./aspects/serverside-ui.js"
 import cm from "./aspects/channel-manager.js"
 import {Channel} from "./aspects/channel-manager.js"
@@ -23,7 +25,7 @@ import crypto from "crypto"
 import cors from "cors"
 import EventEmitter from "events"
 
-const dir = "/home/runner/chat"
+const dir = process.cwd()
 
 User.list()
 
