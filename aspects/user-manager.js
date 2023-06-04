@@ -1,17 +1,78 @@
-import { trace } from "./serverside-ui.js"
-import { config } from "./config-manager.js"
 import crypto from "node:crypto"
 import Database from "@replit/database"
-import Packet from "./packet-manager.js"
 let userDB = new Database()
 
-// await client.query("CREATE TABLE usernames (UserID varchar(255), ")
+import pkg from "pg"
+const { Client } = pkg
+const client = new Client(process.env.DATABASE_URL)
+
+import { trace } from "./serverside-ui.js"
+import { config } from "./config-manager.js"
+import Packet from "./packet-manager.js"
 
 class User {
+  constructor(userData) {
+
+  }
+
+  static async get(uuid){
+    if(typeof uuid == "string"){
+      return {
+        username:async () =>{
+          await client.connect()
+          try{
+            let username = await client.query("SELECT UserId, Username FROM Usernames WHERE UserId = $1",[uuid]).rows[0]
+            trace(`Task Successful: User ${uuid} has Username ${username}`,"@userManager")
+            client.end()
+            return username
+          } catch(err) {
+            client.end()
+            trace("Task Failed:",err,"@userManager")
+          }
+        }
+      }
+    } else if(typeof uuid == "object") {
+      return {
+        username:async () =>{
+          await client.connect()
+        }
+      }
+    }
+  }
+
+  static async connect(){
+    await client.connect()
+  }
+
+  static async disconnect(){
+    await client.end()
+  }
+
+  static async find(user){
+    try {
+      let userQ = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId=Passwords.UserId WHERE Usernames.Username=$1 and Passwords.Password=$2",[user.username, user.password])
+      return userQ.rows[0] ? userQ.rows[0] : "Not Found"
+    } catch(err) {
+      throw err
+    }
+  }
+
+  static async list(withData=false){
+    if(withData){
+      let responses = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId = Passwords.UserId")
+      trace(responses.rows,"@userManager")
+    } else {
+      let responses = await client.query("SELECT UserId FROM Usernames")
+      trace(responses.rows,"@userManager")
+    }
+  }
+}
+
+class UserDepr {
   #uuid;
 
   constructor(userData = { username: null, password: null, }) {
-    trace("@WARNING", "UNSAFE USER OBJECT")
+    trace("@WARNING", "UNSAFE USER OBJECT, DEPRECATED USER CLASS")
     this.username = userData.username
     this.password = userData.password
     this.#uuid = crypto.randomUUID()
@@ -72,6 +133,7 @@ class User {
         data: {}
       }
     ) {
+      trace("@WARNING","DEPRECATED USER CLASS")
       this.#sensitive = userData.sensitive
       this.#constant = userData.constant
       this.#data = userData.data

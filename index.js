@@ -27,7 +27,13 @@ import EventEmitter from "events"
 
 const dir = process.cwd()
 
-// User.list()
+User.connect().then(async ()=>{
+  await User.list(true)
+
+  await User.find({username:"Test4",password:"qwer"}).then((users)=>{
+    trace(users,"@found user!")
+  })
+})
 
 serverCommands()
 
