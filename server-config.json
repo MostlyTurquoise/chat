@@ -1,9 +1,10 @@
 {
   "trace":{
     "general":true,
+    "lineMode":false,
+    "timestamp":false,
+    "consoleFlags":true,
     "rules":{
-      "timestamp":false,
-      "consoleFlags":true,
       "audienceCheck":true,
       "messageOut":true,
       "messageIn":true,
@@ -14,9 +15,7 @@
       "userData":false,
       "religion":false,
       "longpoll":true,
-      "line":true,
-      "channelDebug":true,
-      "fullLine":false
+      "channelDebug":true
     }
   },
   "build":{

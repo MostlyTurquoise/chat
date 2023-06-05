@@ -18,6 +18,7 @@ import pray from "./religion.js"
 import longpoll from "./poll-manager.js"
 import { updateClients, handle } from "./request-manager.js"
 import { config, updateConfig } from "./config-manager.js"
+import { time } from "console";
 
 let serverSide = {}
 serverSide.echo = (val) => {
@@ -81,6 +82,57 @@ function getErrorObject() {
 }
 
 function trace(...args) {
+  if (config.trace.general) {
+    let outputArgs = []
+    let preface = []
+    let flag = "[anonymous]"
+    let rule = ""
+    let time = `${new Date().toLocaleTimeString()}`
+    let line = "unknown"
+    for (let arg in args) {
+      if (typeof args[arg] == "string" && args[arg].substring(0, 1)=="@") {
+        flag = `[${args[arg].substring(1)}]`
+        rule = args[arg].substring(1)
+      } else {
+        outputArgs.push(args[arg])
+      }
+    }
+
+    let errStack = getErrorObject().stack
+    let caller = ""
+    try {
+      caller = [...errStack.match(/\n    at file:.*/)]
+    }catch(err){
+      caller = "err"
+    }
+
+    switch (config.trace.lineMode) {
+      case "full":
+        line = errStack
+        break;
+      case true:
+        line = errStack
+        break;
+      case "path":
+        line = caller[0].toString()
+        break;
+      case "file":
+        line = caller[0].toString().split("/").at(-1)
+        break;
+    }
+
+
+    if (config.trace.lineMode && config.trace.lineMode!="none") preface.push(line)
+    if (config.trace.timestamp) preface.push(time)
+    if (config.trace.consoleFlags) preface.push(flag)
+
+    if(config.trace.rules[rule] != false){
+      console.log(...preface, ...outputArgs)
+    }
+  }
+}
+
+function traceOld(...args) {
 
   let err = getErrorObject();
   let caller = err.stack.match(/\n    at file:[a-zA-Z0-9\/:\-\._=\(\)\s]*/)
@@ -252,11 +304,11 @@ serverSide.sqlRun = (e) => {
     'f9e50e7e-bee8-42c9-92fc-e2e538c29e50': { username: 'Test', password: 'asdf', creationDate: 'cry' }
   }
 
-  for(let key in oldDb) {
+  for (let key in oldDb) {
     let password = oldDb[key].password ? oldDb[key].password : oldDb[key].sensitive.password
-    client.query("INSERT INTO Passwords VALUES ($1, $2)",[key, password]).then(()=>{
+    client.query("INSERT INTO Passwords VALUES ($1, $2)", [key, password]).then(() => {
       trace(`${key} (${oldDb[key].username}) loaded`)
-    }).catch((err)=>{
+    }).catch((err) => {
       console.error(err)
     })
   }
