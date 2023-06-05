@@ -20,8 +20,10 @@
   },
   "build":{
     "stable":false,
-    "version":"0.1.11",
-    "versionAdd":"beta 0.2.x",
+    "version":"0.1.12",
+    "versionAdd":"beta 0.2.2",
+    "format":"1.0",
+    "formatAdd":" beta 1.1",
     "loaded":true,
     "restrictMessages":false,
     "description":"This build is in development and its use may damage the server. Are you sure you wish to continue?"
