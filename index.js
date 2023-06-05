@@ -27,13 +27,36 @@ import EventEmitter from "events"
 
 const dir = process.cwd()
 
-User.connect().then(async ()=>{
+User.connect().then(async()=>{
   await User.list(true)
 
   await User.find({username:"Test4",password:"qwer"}).then((users)=>{
     trace(users,"@found user!")
   })
-})
+}).catch((async (err) =>{
+  trace("Connection Failed")
+}))
+
+// function userDebug(){
+//   User.connect().then(async ()=>{
+//     await User.list(true)
+  
+//     await User.find({username:"Test4",password:"qwer"}).then((users)=>{
+//       trace(users,"@found user!")
+//     })
+//   }).catch(async (err)=>{
+//     trace("User Database Error:",err.message,"@WARNING")
+//     User.disconnect().then(()=>{
+//       trace("Trying again in 30 seconds...","@UserConnect")
+//       setTimeout(userDebug,30000)
+//     }).catch((err)=>{
+//       trace("User Connection Failure.")
+//     })
+    
+//   })
+// }
+
+// userDebug()
 
 serverCommands()
 

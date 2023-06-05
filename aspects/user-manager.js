@@ -19,14 +19,11 @@ class User {
     if(typeof uuid == "string"){
       return {
         username:async () =>{
-          await client.connect()
           try{
             let username = await client.query("SELECT UserId, Username FROM Usernames WHERE UserId = $1",[uuid]).rows[0]
             trace(`Task Successful: User ${uuid} has Username ${username}`,"@userManager")
-            client.end()
             return username
           } catch(err) {
-            client.end()
             trace("Task Failed:",err,"@userManager")
           }
         }
@@ -34,18 +31,44 @@ class User {
     } else if(typeof uuid == "object") {
       return {
         username:async () =>{
-          await client.connect()
+          try{
+            let username = await client.query("SELECT UserId, Username FROM Usernames WHERE ")
+          } catch(err) {
+            throw err
+          }
         }
       }
     }
   }
 
-  static async connect(){
-    await client.connect()
+  static async connect(tries=3){
+    return new Promise(async (resolve, reject)=>{
+      try{
+        await client.connect()
+        resolve()
+      } catch(err) {
+        let timeout = 5
+        trace("User Database Error:",err.message,"@WARNING")
+        if(tries>0){
+          trace(`User Database: retrying connection in ${timeout}s`)
+          setTimeout(()=>{this.connect(tries-1)},timeout*1000)
+        } else {
+          trace("User Database: connection failed")
+          resolve(err)
+        }
+      }
+    })
   }
 
   static async disconnect(){
-    await client.end()
+    return new Promise(async (resolve, reject)=>{
+      try{
+        await client.end()
+        resolve()
+      } catch(err) {
+        reject(err)
+      }
+    })
   }
 
   static async find(user){
