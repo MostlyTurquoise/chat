@@ -24,7 +24,7 @@
     "versionAdd":"beta 0.2.x",
     "loaded":true,
     "restrictMessages":false,
-    "description":"This build is in development and it's use may damage the server. Are you sure you wish to continue?"
+    "description":"This build is in development and its use may damage the server. Are you sure you wish to continue?"
   },
   "strictSessionId":false,
   "stopMessages":false,
