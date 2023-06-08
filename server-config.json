@@ -31,5 +31,7 @@
   "strictSessionId":false,
   "stopMessages":false,
   "restrictMessages":false,
-  "audienceCheckDelay":30000000
+  "audienceCheckDelay":30000000,
+  "devServer":false,
+  "devPassword":"12345"
 }

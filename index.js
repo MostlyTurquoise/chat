@@ -1,17 +1,16 @@
 import express from "express"
 const app = express();
 
-import longpollInit from "./aspects/poll-manager.js"
-const longpoll = new longpollInit(app);
-
-import Communicatey from "./aspects/Communicatey.js"
-
 import bodyParser from "body-parser"
 import cookieParser from "cookie-parser"
 
 import process from "node:process"
 
 import { trace, serverCommands } from "./aspects/serverside-ui.js"
+import longpollInit from "./aspects/poll-manager.js"
+const longpoll = new longpollInit(app);
+
+import Communicatey from "./aspects/Communicatey.js"
 import cm from "./aspects/channel-manager.js"
 import {Channel} from "./aspects/channel-manager.js"
 import { updateClients, handle } from "./aspects/request-manager.js"
@@ -430,7 +429,7 @@ app.get("/reactpage", (req,res)=>{
 })
 
 app.listen(3001, () => {
-  trace('Server Started', "@server");
+  trace('Main Server started at 3001', "@server");
 });
 
 export { dir, longpoll }

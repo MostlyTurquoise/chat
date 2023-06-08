@@ -1,11 +1,14 @@
-import fs from "fs"
+import fsp from "fs/promises"
 import readlineInit from "readline"
+import EventEmitter from "events"
 
 const readline = readlineInit.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
+import express from "express"
+import bodyParser from "body-parser"
 import pkg from "pg"
 const { Client } = pkg
 
@@ -19,6 +22,70 @@ import longpoll from "./poll-manager.js"
 import { updateClients, handle } from "./request-manager.js"
 import { config, updateConfig } from "./config-manager.js"
 import { time } from "console";
+
+let consoleContents = []
+let updateDev = new EventEmitter()
+
+if(config.devServer){
+  const devApp = express()
+
+  devApp.use(bodyParser.json());
+
+  devApp.use("/dev/:anything",(req,res,next)=>{
+    express.static(`.././pages-dev/${req.params.anything}`)(req,res,next)
+  })
+
+  devApp.get("/dev/console",(req,res)=>{
+    res.sendFile(".././pages-dev/console/index.html")
+  })
+
+  devApp.post("/dev/console",(req,res)=>{
+    if(req.headers["password"]==config.devPassword){
+      trace("Client typed:",req.body)
+    }
+  })
+
+  devApp.get("/dev/consoleContents",(req,res)=>{
+    if(req.headers["password"]==config.devPassword){
+      res.json(consoleContents)
+    }
+  })
+
+  devApp.get("/dev/consoleUpdates",(req,res)=>{
+    trace("Client Connected")
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    })
+
+    let emitHandler = (message)=>{
+      res.write("data: "+message+"\n\n")
+    }
+
+    updateDev.on("console",emitHandler)
+
+    req.on("close",()=>{
+      trace("Client Disconnected")
+      updateDev.removeListener(emitHandler)
+    })
+
+    req.on("end",()=>{
+      trace("Client Disconnected")
+      updateDev.removeListener(emitHandler)
+    })
+
+    req.on("error",()=>{
+      trace("Client Error")
+      updateDev.removeListener(emitHandler)
+    })
+  })
+
+  devApp.listen(4001,()=>{
+    console.log("Developer Access Server started at :4001")
+  })
+
+}
 
 let serverSide = {}
 serverSide.echo = (val) => {
@@ -127,6 +194,10 @@ function trace(...args) {
     if (config.trace.consoleFlags) preface.push(flag)
 
     if(config.trace.rules[rule] != false){
+      if(config.devServer){
+        consoleContents.push([...preface,...outputArgs])
+      }
+      
       console.log(...preface, ...outputArgs)
     }
   }
