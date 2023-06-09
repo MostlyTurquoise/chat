@@ -15,25 +15,25 @@ class User {
 
   }
 
-  static async get(uuid){
-    if(typeof uuid == "string"){
+  static async get(uuid) {
+    if (typeof uuid == "string") {
       return {
-        username:async () =>{
-          try{
-            let username = await client.query("SELECT UserId, Username FROM Usernames WHERE UserId = $1",[uuid]).rows[0]
-            trace(`Task Successful: User ${uuid} has Username ${username}`,"@userManager")
+        username: async () => {
+          try {
+            let username = await client.query("SELECT UserId, Username FROM Usernames WHERE UserId = $1", [uuid]).rows[0]
+            trace(`Task Successful: User ${uuid} has Username ${username}`, "@userManager")
             return username
-          } catch(err) {
-            trace("Task Failed:",err,"@userManager")
+          } catch (err) {
+            trace("Task Failed:", err, "@userManager")
           }
         }
       }
-    } else if(typeof uuid == "object") {
+    } else if (typeof uuid == "object") {
       return {
-        username:async () =>{
-          try{
+        username: async () => {
+          try {
             let username = await client.query("SELECT UserId, Username FROM Usernames WHERE ")
-          } catch(err) {
+          } catch (err) {
             throw err
           }
         }
@@ -41,52 +41,72 @@ class User {
     }
   }
 
-  static async connect(tries=3){
-    return new Promise(async (resolve, reject)=>{
-      try{
+  static async bulkGet(uuid, params = "*") {
+    if (typeof uuid == "string") {
+      try {
+        let data = await client.query("SELECT * FROM ClientData WHERE UserId = $1", [uuid]).rows[0]
+        trace(`Task Successful: User ${uuid} has data ${data}`, "@userManager")
+        return data
+      } catch (err) {
+        trace("Task Failed:", err, "@userManager")
+      }
+    } else if(typeof uuid=="object"){
+      try {
+        let data = await client.query("SELECT * FROM ClientData WHERE UserId = $1", [uuid]).rows[0]
+        trace(`Task Successful: User ${uuid} has data ${data}`, "@userManager")
+        return data
+      } catch (err) {
+        trace("Task Failed:", err, "@userManager")
+      }
+    }
+  }
+
+  static async connect(tries = 3) {
+    return new Promise(async (resolve, reject) => {
+      try {
         await client.connect()
         resolve()
-      } catch(err) {
+      } catch (err) {
         let timeout = 5
-        trace("User Database Error:",err.message,"@WARNING")
-        if(tries>0){
-          trace(`User Database: retrying connection in ${timeout}s`)
-          setTimeout(()=>{this.connect(tries-1)},timeout*1000)
+        trace("User Database Error:", err.message, "@WARNING")
+        if (tries > 0) {
+          trace(`User Database: retrying connection in ${timeout}s`, "@WARNING")
+          setTimeout(() => { this.connect(tries - 1) }, timeout * 1000)
         } else {
-          trace("User Database: connection failed")
+          trace("User Database: connection failed", "@WARNING")
           resolve(err)
         }
       }
     })
   }
 
-  static async disconnect(){
-    return new Promise(async (resolve, reject)=>{
-      try{
+  static async disconnect() {
+    return new Promise(async (resolve, reject) => {
+      try {
         await client.end()
         resolve()
-      } catch(err) {
+      } catch (err) {
         reject(err)
       }
     })
   }
 
-  static async find(user){
+  static async find(user) {
     try {
-      let userQ = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId=Passwords.UserId WHERE Usernames.Username=$1 and Passwords.Password=$2",[user.username, user.password])
+      let userQ = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId=Passwords.UserId WHERE Usernames.Username=$1 and Passwords.Password=$2", [user.username, user.password])
       return userQ.rows[0] ? userQ.rows[0] : "Not Found"
-    } catch(err) {
+    } catch (err) {
       throw err
     }
   }
 
-  static async list(withData=false){
-    if(withData){
+  static async list(withData = false) {
+    if (withData) {
       let responses = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId = Passwords.UserId")
-      trace(responses.rows,"@userManager")
+      trace(responses.rows, "@userManager")
     } else {
       let responses = await client.query("SELECT UserId FROM Usernames")
-      trace(responses.rows,"@userManager")
+      trace(responses.rows, "@userManager")
     }
   }
 }
@@ -156,7 +176,7 @@ class UserDepr {
         data: {}
       }
     ) {
-      trace("@WARNING","DEPRECATED USER CLASS")
+      trace("@WARNING", "DEPRECATED USER CLASS")
       this.#sensitive = userData.sensitive
       this.#constant = userData.constant
       this.#data = userData.data
@@ -200,37 +220,37 @@ class UserDepr {
     }
 
     getAll() {
-      if(this.#permission.read.includes("sensitive") && this.#permission.read.includes("constant") && this.#permission.read.includes("data")){
+      if (this.#permission.read.includes("sensitive") && this.#permission.read.includes("constant") && this.#permission.read.includes("data")) {
         return {
-          sensitive:this.#sensitive,
-          constant:this.#constant,
-          data:this.#data
+          sensitive: this.#sensitive,
+          constant: this.#constant,
+          data: this.#data
         }
       } else {
         return "Incorrect Permissions"
       }
     }
 
-    async load(uuid, version=null) {
-      trace("Loading User","@userEditor")
+    async load(uuid, version = null) {
+      trace("Loading User", "@userEditor")
       let loadedUser = await userDB.get(uuid)
       if ((loadedUser && loadedUser.format != "v2")) {
-        trace("Format v1",loadedUser,"@userEditor")
+        trace("Format v1", loadedUser, "@userEditor")
         this.#sensitive = {
-          username:loadedUser.username,
-          password:loadedUser.password,
+          username: loadedUser.username,
+          password: loadedUser.password,
         }
         this.#constant = {
           creationDate: loadedUser.creationDate ? loadedUser.creationDate : null,
-          uuid:uuid
+          uuid: uuid
         }
         this.#data = loadedUser.data ? loadedUser.data : null
       } else if ((loadedUser && loadedUser.format == "v2")) {
-        trace("Format v2",loadedUser,"@userEditor")
+        trace("Format v2", loadedUser, "@userEditor")
         this.#sensitive = loadedUser.sensitive
         this.#constant = loadedUser.constant
         this.#data = loadedUser.data
-      } else if(!loadedUser){
+      } else if (!loadedUser) {
         trace("User not found")
       }
       return this
@@ -240,16 +260,16 @@ class UserDepr {
       return this.#constant.uuid
     }
 
-    async save(version="v1") {
-      if(version=="v1"){
+    async save(version = "v1") {
+      if (version == "v1") {
         await userDB.set(this.#constant.uuid, { format: "v1", username: this.#sensitive.username, password: this.#sensitive.password, creationDate: this.#constant.creationDate, data: this.#data })
-        
-      } else if(version=="v2"){
+
+      } else if (version == "v2") {
         await userDB.set(this.#constant.uuid, {
-          sensitive:this.#sensitive,
-          constant:this.#constant,
-          data:this.#data,
-          format:"v2"
+          sensitive: this.#sensitive,
+          constant: this.#constant,
+          data: this.#data,
+          format: "v2"
         })
       }
 
@@ -260,22 +280,22 @@ class UserDepr {
     static async get(id) {
       trace("Getting", id, "@userAction")
       let user = await userDB.get(id)
-      if(user){
-        try{
+      if (user) {
+        try {
           delete user.password
-        } catch(err){
+        } catch (err) {
           delete user.sensitive.password
         }
         user.uuid = id
       } else {
         user = {
-          uuid:"undefined",
-          username:"Unknown"
+          uuid: "undefined",
+          username: "Unknown"
         }
       }
-      
-      
-      
+
+
+
       return user
     }
   }
@@ -365,7 +385,7 @@ User Manager:
 
 let users = {}
 
-users.create = function(body, cb = () => { }) {
+users.create = function (body, cb = () => { }) {
   let userUUID = crypto.randomUUID()
   userDB.set(userUUID, { username: body.username, password: body.password }).then(() => { cb(userUUID) })
   trace(`Created User "${body.username}" (${userUUID})`, "@userAction")
@@ -374,7 +394,7 @@ users.create = function(body, cb = () => { }) {
 
 users.clear = {}
 
-users.clear.byId = function(uuid) {
+users.clear.byId = function (uuid) {
   if (typeof uuid == "string") {
     userDB.delete(uuid).then(() => {
       trace(`Deleted user (${uuid})`, "@userAction")
@@ -390,9 +410,9 @@ users.clear.byId = function(uuid) {
   }
 }
 
-users.find = async function(uObj, cb) {
+users.find = async function (uObj, cb) {
   trace("Finding", uObj, "@userAction")
-  userDB.list().then(async function(ulist) {
+  userDB.list().then(async function (ulist) {
     trace("Searching", ulist, "@userAction")
     let returnData = new Packet(
       "returnData",
@@ -436,15 +456,15 @@ users.find = async function(uObj, cb) {
   })
 }
 
-users.get = async function(id, cb) {
+users.get = async function (id, cb) {
   trace("Getting", id, "@userAction")
   userDB.get(id).then((info) => {
     cb(info)
   })
 }
 
-users.list = async function() {
-  userDB.list().then(async function(ulist) {
+users.list = async function () {
+  userDB.list().then(async function (ulist) {
     trace("Searching", ulist, "@userAction")
     for (let i = 0; i < ulist.length; i++) {
       trace(`Checking (${ulist[i]})`, "@userAction")
