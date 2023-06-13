@@ -42,11 +42,9 @@
   },
   'd71440f5-b282-45d4-a86b-45a06c08d44f': { username: 'Kit', password: 'cat' },
   'e5138ba6-910f-43dc-8cf7-8f3568ba2fd1': {
-    sensitive: { username: 'Test4', password: 'qwer' },
-    constant: {
-      creationDate: null,
-      uuid: 'e5138ba6-910f-43dc-8cf7-8f3568ba2fd1'
-    },
+    username: 'Test4', password: 'qwer',
+    creationDate: null,
+    uuid: 'e5138ba6-910f-43dc-8cf7-8f3568ba2fd1'
     data: null,
     format: 'v2'
   },
@@ -56,11 +54,11 @@
     creationDate: '2023-05-03T10:14:58.042Z'
   },
   'eaae686e-22ae-436f-ab9c-c7efe26a3f69': {
-    sensitive: { username: 'Test5', password: 'uiop' },
-    constant: {
+    username: 'Test5', password: 'uiop',
+
       creationDate: '2023-03-01T09:58:56.469Z',
       uuid: 'eaae686e-22ae-436f-ab9c-c7efe26a3f69'
-    },
+
     data: null,
     format: 'v2'
   },

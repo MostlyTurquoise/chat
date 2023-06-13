@@ -15,14 +15,28 @@ class User {
 
   }
 
-  static async get(uuid) {
+  static get(uuid) {
     if (typeof uuid == "string") {
       return {
         username: async () => {
           try {
-            let username = await client.query("SELECT UserId, Username FROM Usernames WHERE UserId = $1", [uuid]).rows[0]
-            trace(`Task Successful: User ${uuid} has Username ${username}`, "@userManager")
+            let response = await client.query("SELECT UserId, Username FROM Public WHERE UserId = $1", [uuid])
+            let user = response.rows[0]
+            let username = user.username
+            trace(`Task Successful: User "${uuid}" has Username "${username}"`,  "@userManager")
             return username
+          } catch (err) {
+            trace("Task Failed:", err, "@userManager")
+          }
+        },
+        data: async(value) => {
+          try {
+            trace("@WARNING","Please ensure that safe column names are used.")
+            let response = await client.query(`SELECT UserId, ${value} FROM Data WHERE UserId = $1`, [uuid])
+            let user = response.rows[0]
+            let data = user[value.toLowerCase()]
+            trace(`Task Successful: User "${uuid}" has Data "${value}" of "${data}"`,  "@userManager")
+            return data
           } catch (err) {
             trace("Task Failed:", err, "@userManager")
           }
@@ -32,7 +46,7 @@ class User {
       return {
         username: async () => {
           try {
-            let username = await client.query("SELECT UserId, Username FROM Usernames WHERE ")
+            let username = await client.query("SELECT UserId, Username FROM Public WHERE ")
           } catch (err) {
             throw err
           }
@@ -69,12 +83,13 @@ class User {
       } catch (err) {
         let timeout = 5
         trace("User Database Error:", err.message, "@WARNING")
+        throw err
         if (tries > 0) {
           trace(`User Database: retrying connection in ${timeout}s`, "@WARNING")
           setTimeout(() => { this.connect(tries - 1) }, timeout * 1000)
         } else {
           trace("User Database: connection failed", "@WARNING")
-          resolve(err)
+          reject(err)
         }
       }
     })
@@ -93,7 +108,7 @@ class User {
 
   static async find(user) {
     try {
-      let userQ = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId=Passwords.UserId WHERE Usernames.Username=$1 and Passwords.Password=$2", [user.username, user.password])
+      let userQ = await client.query("SELECT Public.UserId, Public.Username, Settings.Password FROM Public FULL OUTER JOIN Settings ON Public.UserId=Settings.UserId WHERE Public.Username=$1 and Settings.Password=$2", [user.username, user.password])
       return userQ.rows[0] ? userQ.rows[0] : "Not Found"
     } catch (err) {
       throw err
@@ -102,7 +117,7 @@ class User {
 
   static async list(withData = false) {
     if (withData) {
-      let responses = await client.query("SELECT Usernames.UserId, Usernames.Username, Passwords.Password FROM Usernames FULL OUTER JOIN Passwords ON Usernames.UserId = Passwords.UserId")
+      let responses = await client.query("SELECT Public.UserId, Public.Username, Settings.Password FROM Public FULL OUTER JOIN Settings ON Public.UserId=Settings.UserId")
       trace(responses.rows, "@userManager")
     } else {
       let responses = await client.query("SELECT UserId FROM Usernames")

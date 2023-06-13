@@ -284,6 +284,8 @@ serverSide.sqlQuery = async (q) => {
   }
 }
 
+serverSide.sql = serverSide.sqlQuery
+
 serverSide.sqlClose = async (q) => {
   try {
     await client.end()
@@ -343,11 +345,9 @@ serverSide.sqlRun = (e) => {
     },
     'd71440f5-b282-45d4-a86b-45a06c08d44f': { username: 'Kit', password: 'cat' },
     'e5138ba6-910f-43dc-8cf7-8f3568ba2fd1': {
-      sensitive: { username: 'Test4', password: 'qwer' },
-      constant: {
-        creationDate: null,
-        uuid: 'e5138ba6-910f-43dc-8cf7-8f3568ba2fd1'
-      },
+      username: 'Test4', password: 'qwer',
+      creationDate: null,
+      uuid: 'e5138ba6-910f-43dc-8cf7-8f3568ba2fd1',
       data: null,
       format: 'v2'
     },
@@ -357,11 +357,11 @@ serverSide.sqlRun = (e) => {
       creationDate: '2023-05-03T10:14:58.042Z'
     },
     'eaae686e-22ae-436f-ab9c-c7efe26a3f69': {
-      sensitive: { username: 'Test5', password: 'uiop' },
-      constant: {
+      username: 'Test5', password: 'uiop',
+  
         creationDate: '2023-03-01T09:58:56.469Z',
-        uuid: 'eaae686e-22ae-436f-ab9c-c7efe26a3f69'
-      },
+        uuid: 'eaae686e-22ae-436f-ab9c-c7efe26a3f69',
+  
       data: null,
       format: 'v2'
     },
@@ -376,13 +376,15 @@ serverSide.sqlRun = (e) => {
   }
 
   for (let key in oldDb) {
-    let password = oldDb[key].password ? oldDb[key].password : oldDb[key].sensitive.password
-    client.query("INSERT INTO Passwords VALUES ($1, $2)", [key, password]).then(() => {
+    let field1 = 0
+    client.query("INSERT INTO Data VALUES ( $1, $1 )", [key, field1]).then(() => {
       trace(`${key} (${oldDb[key].username}) loaded`)
     }).catch((err) => {
       console.error(err)
     })
   }
+
+  //Settings, Permissions, Public, Data
 }
 
 export { trace, serverCommands, serverSide }
