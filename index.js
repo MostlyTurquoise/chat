@@ -1,3 +1,4 @@
+import "dotenv/config"
 import express from "express"
 const app = express();
 
@@ -27,9 +28,9 @@ import EventEmitter from "events"
 const dir = process.cwd()
 
 User.connect().then(async()=>{
-  await User.list(true)
+  await User.list()
 
-  await User.get("eaae686e-22ae-436f-ab9c-c7efe26a3f69").data("Clicks")
+  await User.get(["eaae686e-22ae-436f-ab9c-c7efe26a3f69","f9e50e7e-bee8-42c9-92fc-e2e538c29e50"]).username()
 
 }).catch((async (err) =>{
   trace("Connection Failed",err)

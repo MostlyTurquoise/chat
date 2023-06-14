@@ -46,7 +46,9 @@ class User {
       return {
         username: async () => {
           try {
-            let username = await client.query("SELECT UserId, Username FROM Public WHERE ")
+            let usernameList = await client.query("SELECT UserId, Username FROM Public WHERE UserId = ANY($1)",[uuid])
+            trace(`Task Successful: Users [${uuid}] have usernames:`, usernameList.rows,  "@userManager")
+            return usernameList.rows
           } catch (err) {
             throw err
           }
@@ -120,7 +122,7 @@ class User {
       let responses = await client.query("SELECT Public.UserId, Public.Username, Settings.Password FROM Public FULL OUTER JOIN Settings ON Public.UserId=Settings.UserId")
       trace(responses.rows, "@userManager")
     } else {
-      let responses = await client.query("SELECT UserId FROM Usernames")
+      let responses = await client.query("SELECT UserId FROM Public")
       trace(responses.rows, "@userManager")
     }
   }
